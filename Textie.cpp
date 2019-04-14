@@ -15,9 +15,11 @@ void EnableRawMode()
   tcgetattr(STDIN_FILENO,&original_termios);
   atexit(DisableRawMode);//from stdlib.h
   struct termios raw=original_termios;
-  raw.c_iflag &= ~(ICRNL | IXON);
+  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
   raw.c_oflag &= ~(OPOST);
   raw.c_lflag&=~(ECHO | ICANON | ISIG | IEXTEN);
+  raw.c_cc[VMIN] = 0;//minimum character to read before returning input
+  raw.c_cc[VTIME] = 1;//sets time to wait before returning input
   tcsetattr(STDIN_FILENO,TCSAFLUSH,&raw);
 
 }
